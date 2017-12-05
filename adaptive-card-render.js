@@ -90,13 +90,21 @@ AdaptiveCardMobileRender.prototype.registerActionExecuteCallback = function (cal
     AdaptiveCardMobileRender.onExecuteAction = callback;
 };
 
-AdaptiveCardMobileRender.prototype.render = function (card) {
+AdaptiveCardMobileRender.prototype.render = function () {
+    var card = JSON.parse(android.getCard());
     var messageCard = new MessageCard();
     messageCard.parse(card);
     var renderedCard = messageCard.render();
-    var parent = document.getElementById("androidContainer");
+    var parent = document.querySelector(this.targetDom);
     parent.innerHTML = '';
     parent.appendChild(renderedCard);
+
+    var body = document.body;
+    var html = document.documentElement;
+
+    var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+    android.onHeightChange(height);
 };
 
 AdaptiveCardMobileRender.prototype.onActionExecuted = function (action, request) {
