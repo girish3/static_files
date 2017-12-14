@@ -204,7 +204,7 @@ function showCardAction(action){
         }
         else if(action.card._items[0].constructor.name == "ChoiceSetInput"){
             var url = action.card._items[1]._actionCollection.items[0].url;  
-            choices= action.card._items[0].choices;
+            var choices = action.card._items[0].choices;
             choices.forEach(function(item)
             {
                 item['display'] = item['title'];
