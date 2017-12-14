@@ -190,7 +190,7 @@ function onExecuteAction(action) {
 }
 
 function showCardAction(action){    
-    var NativeSupportedActions = ['DateInput', 'MultiChoiceInput'];
+    var NativeSupportedActions = ['DateInput', 'ChoiceSetInput'];
     if(action != null && action.card != null && action.card._items!= null && action.card._items.length == 2 &&
        action.card._items[0].constructor != null && NativeSupportedActions.indexOf(action.card._items[0].constructor.name) !=-1 &&
        action.card._items[1].constructor != null && action.card._items[1].constructor.name == "ActionSet" && 
@@ -202,8 +202,14 @@ function showCardAction(action){
             var url = action.card._items[1]._actionCollection.items[0].url;
             android.showDatePicker(0, "parseDateInput");            
         }
-        else if(action.card._items[0].constructor.name == "MultiChoiceInput"){
-            var url = action.card._items[1]._actionCollection.items[0].url;            
+        else if(action.card._items[0].constructor.name == "ChoiceSetInput"){
+            var url = action.card._items[1]._actionCollection.items[0].url;  
+            choices= action.card._items[0].choices;
+            choices.forEach(function(item)
+            {
+                item['display'] = item['title'];
+                delete item['title'];
+            });          
             android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseChoiceInput")
         }
     }
