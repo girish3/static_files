@@ -200,7 +200,7 @@ function showCardAction(action){
     {
         if(action.card._items[0].constructor.name == "DateInput"){
             var url = action.card._items[1]._actionCollection.items[0].url;
-            android.showDatePicker(0, "parseDateInput");            
+            android.showDatePicker(0, "parseInputDate");            
         }
         else if(action.card._items[0].constructor.name == "ChoiceSetInput"){
             var url = action.card._items[1]._actionCollection.items[0].url;  
@@ -210,7 +210,7 @@ function showCardAction(action){
                 item['display'] = item['title'];
                 delete item['title'];
             });          
-            android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseChoiceInput")
+            android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseInputChoice")
         }
     }
     else{
@@ -218,7 +218,7 @@ function showCardAction(action){
     }
 }
 
-function parseDateInput(inputDate)
+function parseInputDate(inputDate)
 {
     if (AdaptiveCardMobileRender.onExecuteAction != null){
         var data = {};
@@ -229,7 +229,7 @@ function parseDateInput(inputDate)
     }   
 }
 
-function parseChoiceInput(inputChoice)
+function parseInputChoice(inputChoice)
 {
     if (AdaptiveCardMobileRender.onExecuteAction != null){
         var data = {};
