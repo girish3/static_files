@@ -147,18 +147,26 @@ function onExecuteAction(action) {
     var message = "Action executed\n";
     message += "    Title: " + action.title + "\n";
     if (action instanceof AdaptiveCards.ShowCardAction){
-        temp = action
-        showPopupCard(action);
+        temp = action;
+        showCardAction(action);
+        //showPopupCard(action);
     }
     else if (action instanceof AdaptiveCards.OpenUrlAction) {
-        message += "    Type: OpenUrl\n";
-        message += "    Url: " + action.url + "\n";
+        var data = {}
+        data['Type'] = 'OpenUrl'
+        data['Url'] = action.url;
+        //message += "    Type: OpenUrl\n";
+        //message += "    Url: " + action.url + "\n";
     }
     else if (action instanceof AdaptiveCards.HttpAction) {
-        message += "    Type: Submit";
-        message += "    Data: " + JSON.stringify(action.data);
+        var data = {}
+        data['Type'] = 'Submit';
+        data['Input'] = action.data;
+        data['Url'] = action.url;
+        //message += "    Type: Submit";
+        //message += "    Data: " + JSON.stringify(action.data);
         if (AdaptiveCardMobileRender.onExecuteAction != null){
-            AdaptiveCardMobileRender.onExecuteAction;
+            AdaptiveCardMobileRender.onExecuteAction(message);
         }
 
         temp.setStatus(
@@ -179,6 +187,51 @@ function onExecuteAction(action) {
     }
 
     // alert(message);
+}
+
+function showCardAction(action){    
+    var NativeSupportedActions = ['DateInput', 'MultiChoiceInput'];
+    if(action != null && action.card != null && action.card._items!= null && action.card._items.length == 2 &&
+       action.card._items[0].constructor != null && NativeSupportedActions.indexOf(action.card._items[0].constructor.name) !=-1 &&
+       action.card._items[1].constructor != null && action.card._items[1].constructor.name == "ActionSet" && 
+       action.card._items[1]._actionCollection != null && action.card._items[1]._actionCollection.items != null &&
+       action.card._items[1]._actionCollection.items.length == 1 && action.card._items[1]._actionCollection.items[0].constructor != null &&
+       action.card._items[1]._actionCollection.items[0].constructor.name == "HttpAction")
+    {
+        if(action.card._items[0].constructor.name == "DateInput"){
+            var url = action.card._items[2]._actionCollection.items[0].url;
+            android.showDatePicker(0, "parseDateInput");            
+        }
+        else if(action.card._items[0].constructor.name == "MultiChoiceInput"){
+            var url = action.card._items[2]._actionCollection.items[0].url;            
+            android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseChoiceInput")
+        }
+    }
+    else{
+        showPopupCard(action);
+    }
+}
+
+function parseDateInput(inputDate)
+{
+    if (AdaptiveCardMobileRender.onExecuteAction != null){
+        var data = {};
+        data['Type'] = 'Submit';
+        data['Input'] = {};
+        data['Input']['Date'] = inputDate;
+        AdaptiveCardMobileRender.onExecuteAction(data);
+    }   
+}
+
+function parseChoiceInput(inputChoice)
+{
+    if (AdaptiveCardMobileRender.onExecuteAction != null){
+        var data = {};
+        data['Type'] = 'Submit';
+        data['Input'] = {};
+        data['Input']['Choice'] = inputChoice;
+        AdaptiveCardMobileRender.onExecuteAction(data);
+    }   
 }
 
 function showPopupCard(action) {
@@ -440,7 +493,7 @@ function parseHttpAction(json) {
     action.method = "POST";
     action.body = json["body"];
     action.title = json["name"];
-    action.url = json["url"];
+    action.url = json["target"];
     return action;
 }
 
