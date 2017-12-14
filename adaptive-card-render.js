@@ -144,51 +144,43 @@ function buildStatusCard(text, weight, size) {
 
 var temp = null;
 function onExecuteAction(action) {
-    var message = "Action executed\n";
-    message += "    Title: " + action.title + "\n";
     if (action instanceof AdaptiveCards.ShowCardAction){
         temp = action;
         showCardAction(action);
-        //showPopupCard(action);
     }
     else if (action instanceof AdaptiveCards.OpenUrlAction) {
         var data = {}
-        data['Type'] = 'OpenUrl'
-        data['Url'] = action.url;
-        //message += "    Type: OpenUrl\n";
-        //message += "    Url: " + action.url + "\n";
+        data['Type'] = 'OpenUri'
+        data['Uri'] = action.url;
+        if (AdaptiveCardMobileRender.onExecuteAction != null){
+            AdaptiveCardMobileRender.onExecuteAction(message);
+        }
     }
     else if (action instanceof AdaptiveCards.HttpAction) {
         var data = {}
-        data['Type'] = 'Submit';
-        data['Input'] = action.data;
-        data['Url'] = action.url;
-        //message += "    Type: Submit";
-        //message += "    Data: " + JSON.stringify(action.data);
+        data['Type'] = 'HttpPOST';
+        data['Input'] = JSON.stringify(action.data);
+        data['Target'] = action.url;
         if (AdaptiveCardMobileRender.onExecuteAction != null){
             AdaptiveCardMobileRender.onExecuteAction(message);
         }
 
-        temp.setStatus(
-        {
-            "type": "AdaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Working on it...",
-                    "weight": "normal",
-                    "size": "small"
-                }
-            ]
-        }); 
+        // temp.setStatus(
+        // {
+        //     "type": "AdaptiveCard",
+        //     "body": [
+        //         {
+        //             "type": "TextBlock",
+        //             "text": "Working on it...",
+        //             "weight": "normal",
+        //             "size": "small"
+        //         }
+        //     ]
+        // }); 
     }
-    else {
-        message += "    Type: <unknown>";
-    }
-
-    // alert(message);
 }
 
+var tempAction = null;
 function showCardAction(action){    
     var NativeSupportedActions = ['DateInput', 'ChoiceSetInput'];
     if(action != null && action.card != null && action.card._items!= null && action.card._items.length == 2 &&
@@ -199,16 +191,15 @@ function showCardAction(action){
        action.card._items[1]._actionCollection.items[0].constructor.name == "HttpAction")
     {
         if(action.card._items[0].constructor.name == "DateInput"){
-            var url = action.card._items[1]._actionCollection.items[0].url;
+            tempAction = action;
             android.showDatePicker(0, "parseInputDate");            
         }
         else if(action.card._items[0].constructor.name == "ChoiceSetInput"){
-            var url = action.card._items[1]._actionCollection.items[0].url;  
+            tempAction = action;
             var choices = action.card._items[0].choices;
             choices.forEach(function(item)
             {
                 item['display'] = item['title'];
-                delete item['title'];
             });          
             android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseInputChoice")
         }
@@ -223,8 +214,10 @@ function parseInputDate(inputDate)
     if (AdaptiveCardMobileRender.onExecuteAction != null){
         var data = {};
         data['Type'] = 'Submit';
-        data['Input'] = {};
-        data['Input']['Date'] = inputDate;
+        var json = {}
+        json['tempAction.card._items[0].id'] = inputDate;
+        data['Input'] = JSON.stringify(json);        
+        data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
         AdaptiveCardMobileRender.onExecuteAction(data);
     }   
 }
@@ -234,8 +227,10 @@ function parseInputChoice(inputChoice)
     if (AdaptiveCardMobileRender.onExecuteAction != null){
         var data = {};
         data['Type'] = 'Submit';
-        data['Input'] = {};
-        data['Input']['Choice'] = inputChoice;
+        var json = {}
+        json['tempAction.card._items[0].id'] = inputChoice;
+        data['Input'] = JSON.stringify(json);        
+        data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
         AdaptiveCardMobileRender.onExecuteAction(data);
     }   
 }
@@ -486,10 +481,29 @@ function parseFactSet(json) {
     return factSet;
 }
 
+function getUrlFromOS(os, targets) {
+    return targets.filter(
+        function(targets){return targets.os == os}
+    );
+}
+
 function parseOpenUrlAction(json) {
     var action = new AdaptiveCards.OpenUrlAction();
     action.title = json["name"];
-    action.url = "TODO";
+    if(json["targets"] != null) {
+        var found = getUrlFromOS("android", json["targets"]);
+        if(found.length >= 1)
+        {
+            action.url = found[0]["uri"];
+        }
+        else{
+            found = getUrlFromOS("default", json["targets"])
+            if(found.length >= 1)
+            {
+                action.url = found[0]["uri"];
+            }    
+        }
+    }
     return action;
 }
 
