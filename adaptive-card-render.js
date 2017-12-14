@@ -153,7 +153,7 @@ function onExecuteAction(action) {
         data['Type'] = 'OpenUri'
         data['Uri'] = action.url;
         if (AdaptiveCardMobileRender.onExecuteAction != null){
-            AdaptiveCardMobileRender.onExecuteAction(message);
+            AdaptiveCardMobileRender.onExecuteAction(JSON.stringify(data));
         }
     }
     else if (action instanceof AdaptiveCards.HttpAction) {
@@ -162,7 +162,7 @@ function onExecuteAction(action) {
         data['Input'] = JSON.stringify(action.data);
         data['Target'] = action.url;
         if (AdaptiveCardMobileRender.onExecuteAction != null){
-            AdaptiveCardMobileRender.onExecuteAction(message);
+            AdaptiveCardMobileRender.onExecuteAction(JSON.stringify(data));
         }
         if(popupWindow != null)
         {
@@ -222,7 +222,7 @@ function parseInputDate(inputDate)
         json[tempAction.card._items[0].id] = inputDate;
         data['Input'] = JSON.stringify(json);        
         data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
-        AdaptiveCardMobileRender.onExecuteAction(data);
+        AdaptiveCardMobileRender.onExecuteAction(JSON.stringify(data));
 
         tempAction.setStatus(
             {
@@ -248,7 +248,7 @@ function parseInputChoice(inputChoice)
         json[tempAction.card._items[0].id] = inputChoice;
         data['Input'] = JSON.stringify(json);        
         data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
-        AdaptiveCardMobileRender.onExecuteAction(data);
+        AdaptiveCardMobileRender.onExecuteAction(JSON.stringify(data));
 
         tempAction.setStatus(
             {
