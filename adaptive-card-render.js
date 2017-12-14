@@ -164,19 +164,23 @@ function onExecuteAction(action) {
         if (AdaptiveCardMobileRender.onExecuteAction != null){
             AdaptiveCardMobileRender.onExecuteAction(message);
         }
+        if(popupWindow != null)
+        {
+            popupWindow.close();
+        }
 
-        // temp.setStatus(
-        // {
-        //     "type": "AdaptiveCard",
-        //     "body": [
-        //         {
-        //             "type": "TextBlock",
-        //             "text": "Working on it...",
-        //             "weight": "normal",
-        //             "size": "small"
-        //         }
-        //     ]
-        // }); 
+        temp.setStatus(
+        {
+            "type": "AdaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Working on it...",
+                    "weight": "normal",
+                    "size": "small"
+                }
+            ]
+        }); 
     }
 }
 
@@ -215,10 +219,23 @@ function parseInputDate(inputDate)
         var data = {};
         data['Type'] = 'Submit';
         var json = {}
-        json['tempAction.card._items[0].id'] = inputDate;
+        json[tempAction.card._items[0].id] = inputDate;
         data['Input'] = JSON.stringify(json);        
         data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
         AdaptiveCardMobileRender.onExecuteAction(data);
+
+        tempAction.setStatus(
+            {
+                "type": "AdaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Working on it...",
+                        "weight": "normal",
+                        "size": "small"
+                    }
+                ]
+            }); 
     }   
 }
 
@@ -228,13 +245,27 @@ function parseInputChoice(inputChoice)
         var data = {};
         data['Type'] = 'Submit';
         var json = {}
-        json['tempAction.card._items[0].id'] = inputChoice;
+        json[tempAction.card._items[0].id] = inputChoice;
         data['Input'] = JSON.stringify(json);        
         data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
         AdaptiveCardMobileRender.onExecuteAction(data);
+
+        tempAction.setStatus(
+            {
+                "type": "AdaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Working on it...",
+                        "weight": "normal",
+                        "size": "small"
+                    }
+                ]
+            }); 
     }   
 }
 
+var popupWindow = null;
 function showPopupCard(action) {
     var width = 350;
     var height = 250;
@@ -244,7 +275,7 @@ function showPopupCard(action) {
     left += (window.innerWidth / 2) - (width / 2);
     top += (window.innerHeight / 2) - (height / 2);
     // Open a child window with a desired set of standard browser features
-    var popupWindow = window.open("", '_blank', 'toolbar=no, location=yes, status=no, menubar=no, top=' + top + ', left=' + left + ', width=' + width + ', height=' + height);
+    popupWindow = window.open("", '_blank', 'toolbar=no, location=yes, status=no, menubar=no, top=' + top + ', left=' + left + ', width=' + width + ', height=' + height);
     if (!popupWindow) {
         // If we failed to open the window fail the authentication flow
         throw new Error("Failed to open popup");
