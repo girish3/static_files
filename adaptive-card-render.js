@@ -199,11 +199,11 @@ function showCardAction(action){
        action.card._items[1]._actionCollection.items[0].constructor.name == "HttpAction")
     {
         if(action.card._items[0].constructor.name == "DateInput"){
-            var url = action.card._items[2]._actionCollection.items[0].url;
+            var url = action.card._items[1]._actionCollection.items[0].url;
             android.showDatePicker(0, "parseDateInput");            
         }
         else if(action.card._items[0].constructor.name == "MultiChoiceInput"){
-            var url = action.card._items[2]._actionCollection.items[0].url;            
+            var url = action.card._items[1]._actionCollection.items[0].url;            
             android.showChoicePicker(action.card._items[0].placeholder,JSON.stringify(action.card._items[0].choices), JSON.stringify([]), action.card._items[0].isMultiSelect, "parseChoiceInput")
         }
     }
