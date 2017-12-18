@@ -86,8 +86,10 @@ AdaptiveCardMobileRender.prototype.init = function () {
 
 AdaptiveCardMobileRender.onExecuteAction = null;
 
-AdaptiveCardMobileRender.prototype.registerActionExecuteCallback = function (callback) {
-    AdaptiveCardMobileRender.onExecuteAction = callback;
+AdaptiveCardMobileRender.prototype.registerActionExecuteCallback = function (callbackName) {
+    AdaptiveCardMobileRender.onExecuteAction = function (jsonString) {
+        eval(callbackName + "('" + jsonString + "');");
+    };
 };
 
 AdaptiveCardMobileRender.prototype.render = function () {
@@ -220,7 +222,7 @@ function parseInputDate(inputDate)
         data['Type'] = 'Submit';
         var json = {}
         json[tempAction.card._items[0].id] = inputDate;
-        data['Input'] = JSON.stringify(json);        
+        data['Input'] = json;        
         data['Target'] = tempAction.card._items[1]._actionCollection.items[0].url;
         AdaptiveCardMobileRender.onExecuteAction(JSON.stringify(data));
 
