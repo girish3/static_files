@@ -82,7 +82,7 @@ AdaptiveCardMobileRender.prototype.render = function () {
 
     onHeightChange(height);
 
-    computeMessageCardHash(JSON.stringify(extendedMessageCardJson['MessageCardSerialized']), function(result) {
+    computeMessageCardHash(JSON.minify(extendedMessageCardJson['MessageCardSerialized']), function(result) {
         messageCardHash = result;
     }, function(err){
         messageCardHash = null;
