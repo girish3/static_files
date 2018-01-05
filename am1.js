@@ -215,8 +215,7 @@ function SearchPotentialAction(potentialActions, actionId)
 
 function computeMessageCardHash(messageCardSerializedString, successCallback, errorCallback) {
     try {
-    	var mytring = window.atob(messageCardSerializedString);
-        var messageCardEncoded = unescape(encodeURIComponent(mytring));
+        var messageCardEncoded = unescape(encodeURIComponent(messageCardSerializedString));
         MsrCryptoUtils.ComputeSHA256(messageCardEncoded, successCallback, errorCallback, false);
     }
     catch (ex) {
