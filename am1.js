@@ -215,9 +215,9 @@ function SearchPotentialAction(potentialActions, actionId)
 
 function computeMessageCardHash(messageCardSerializedString, successCallback, errorCallback) {
     try {
-        var messageCardEncoded = unescape(encodeURIComponent(messageCardSerializedString));
-        var mytring = window.atob(json);
-        MsrCryptoUtils.ComputeSHA256(mytring, successCallback, errorCallback, false);
+    	var mytring = window.atob(messageCardSerializedString);
+        var messageCardEncoded = unescape(encodeURIComponent(mytring));
+        MsrCryptoUtils.ComputeSHA256(messageCardEncoded, successCallback, errorCallback, false);
     }
     catch (ex) {
         console.log("Failed to generate message card hash", ex);
