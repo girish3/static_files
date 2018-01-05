@@ -82,12 +82,15 @@ AdaptiveCardMobileRender.prototype.render = function () {
 
     onHeightChange(height);
 
-    computeMessageCardHash(JSON.minify(extendedMessageCardJson['MessageCardSerialized']), function(result) {
-        messageCardHash = result;
-    }, function(err){
-        messageCardHash = null;
-        console.log("Error generating message card hash");
-    })
+   var sha256 = new Hashes.SHA256;
+   messageCardHash = sha256.b64(extendedMessageCardJson['MessageCardSerialized']).toString();
+
+    //computeMessageCardHash(JSON.minify(extendedMessageCardJson['MessageCardSerialized']), function(result) {
+    //    messageCardHash = result;
+    //}, function(err){
+    //    messageCardHash = null;
+    //    console.log("Error generating message card hash");
+    //})
 };
 
 AdaptiveCardMobileRender.prototype.onActionExecuted = function (displayText) {
