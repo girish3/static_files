@@ -105,7 +105,7 @@ function buildStatusCard(text, weight, size) {
                 "type": "TextBlock",
                 "text": text,
                 "weight": weight,
-                "size": size
+                "size": "small"
             }
         ]
     };
