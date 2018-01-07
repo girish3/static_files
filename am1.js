@@ -61,7 +61,7 @@ AdaptiveCardMobileRender.prototype.init = function () {
 
 AdaptiveCardMobileRender.prototype.registerActionExecuteCallback = function (callbackName) {
     AdaptiveCardMobileRender.onExecuteAction = function (jsonString) {
-        window["android"][callbackName](jsonString); 
+        eval(callbackName + "(jsonString);");
     };
 };
 
