@@ -61,7 +61,7 @@ AdaptiveCardMobileRender.prototype.init = function () {
 
 AdaptiveCardMobileRender.prototype.registerActionExecuteCallback = function (callbackName) {
     AdaptiveCardMobileRender.onExecuteAction = function (jsonString) {
-        eval(callbackName + "(jsonString);"); 
+        window["android"][callbackName](jsonString); 
     };
 };
 
@@ -781,7 +781,11 @@ function showChoicePicker(action){
 }
 
 function parseChoicePickerInput(input){
-    return input;
+    // TODO: also handle for multi choick picker
+    if (input.length > 0) {
+        return input[0]["value"]
+    }
+    return input
 }
 
 function parseDatePickerInput(input){
