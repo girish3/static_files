@@ -98,7 +98,7 @@ AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJson) {
 
         // add log in url with display text
     } else {
-        displayText = responseJson.displayMessage;
+        var displayText = responseJson.displayMessage;
         selectedAction.setStatus(buildStatusCard(displayText, "normal", "large"));
     }
 };
