@@ -93,9 +93,20 @@ AdaptiveCardMobileRender.prototype.render = function () {
     //})
 };
 
-AdaptiveCardMobileRender.prototype.onActionExecuted = function (displayText) {
-    selectedAction.setStatus(buildStatusCard(displayText, "normal", "large"));
+AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJsonStr) {
+    var responseJson = JSON.parse(responseJsonStr);
+    if (authError(responseJson)) {
+
+        // add log in url with display text
+    } else {
+        displayText = responseJson.displayMessage;
+        selectedAction.setStatus(buildStatusCard(displayText, "normal", "large"));
+    }
 };
+
+function authError(json) {
+    return "ConnectedAccountNotFoundError" == json['innerErrorCode'];
+}
 
 function buildStatusCard(text, weight, size) {
     return {
@@ -125,8 +136,14 @@ function onExecuteAction(action) {
         }
     }
     else if (action instanceof AdaptiveCards.HttpAction) {
-
-        var inputParameters = action.data
+        //ToDo: Change this
+        var inputParameters = 
+        [
+            {
+                'id' : 'comment',
+                'value' : action.data['comment']
+            }
+        ]
 
         var actionPayload = generateActionPayload(inputParameters, action.id);
 
@@ -140,7 +157,51 @@ function onExecuteAction(action) {
             popupWindow = null;
         }
 
-        selectedAction.setStatus(buildStatusCard("Working on it...", "normal", "large"));            
+        var statusJson = {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.0",
+            "body": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "auto",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://messagecarddemo.blob.core.windows.net/messagecard/loader.gif",
+                                    "size": "small"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "Container",
+                                    "height": "stretch"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "height": "auto",
+                                    "text": "Working on it",
+                                    "size": "small",
+                                    "spacing": "small"
+                                },
+                                {
+                                    "type": "Container",
+                                    "height": "stretch"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+        selectedAction.setStatus(statusJson);            
     }
 }
 
@@ -785,6 +846,7 @@ function parseChoicePickerInput(input){
     if (input.length > 0) {
         return input[0]["value"]
     }
+
     return input
 }
 
