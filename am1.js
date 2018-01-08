@@ -94,11 +94,10 @@ AdaptiveCardMobileRender.prototype.render = function () {
 };
 
 AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJson) {
+    var displayText = responseJson.displayMessage;
     if (authError(responseJson)) {
-
-        // add log in url with display text
+        selectedAction.setStatus(buildAuthFailureStatusCard(displayText, "https://outlook.office.com" + responseJson.authenticationUrl, "normal", "large"));
     } else {
-        var displayText = responseJson.displayMessage;
         selectedAction.setStatus(buildStatusCard(displayText, "normal", "large"));
     }
 };
@@ -106,6 +105,23 @@ AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJson) {
 function authError(json) {
     return "ConnectedAccountNotFoundError" == json['innerErrorCode'];
 }
+
+function buildAuthFailureStatusCard(text, url, weight, size) {
+    return {
+        "type": "AdaptiveCard",
+        "body": [{
+            "type": "TextBlock",
+            "text": text,
+            "weight": weight,
+            "size": "small"
+        }],
+        "actions": [{
+            "type": "Action.OpenUrl",
+            "title": "Please log in",
+            "url": url
+        }]
+    };
+};
 
 function buildStatusCard(text, weight, size) {
     return {
