@@ -93,8 +93,7 @@ AdaptiveCardMobileRender.prototype.render = function () {
     //})
 };
 
-AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJsonStr) {
-    var responseJson = JSON.parse(responseJsonStr);
+AdaptiveCardMobileRender.prototype.onActionExecuted = function (responseJson) {
     if (authError(responseJson)) {
 
         // add log in url with display text
